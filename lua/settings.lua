@@ -26,8 +26,6 @@ vim.opt.hlsearch = true
 
 vim.opt.signcolumn = 'yes'
 
-vim.cmd('colorscheme evening')
-
 vim.opt.autochdir = true
 
 vim.opt.completeopt = 'menu,menuone,longest,popup,noinsert'

@@ -1,8 +1,7 @@
 require("settings")
+require("pipeto")
 require("keymap")
-require("lsp")
 
---[[
 -- Bootstrap lazy.nvim
 --   lazypath will be something like  ~/.local/share/nvim/lazy/lazy.nvim/
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -21,8 +20,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Load Plugins from  ~/.config/nvim/lua/plugins
+-- Load Plugins from  ~/.config/nvim/lua/plugins/*
 require("lazy").setup("plugins")
---]]
 
 
