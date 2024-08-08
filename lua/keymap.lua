@@ -30,19 +30,33 @@ vim.keymap.set({"n", "v", "o"}, "ß", "$", opts)
 
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', opts)
 
+local lsp_attach_group = vim.api.nvim_create_augroup('LspAttachGroup', { clear = true })
 vim.api.nvim_create_autocmd("LspAttach", {
+    group = lsp_attach_group,
     callback = function (args)
-        local lsp_opts = { buffer = args.buf, silent = true }
+        local lsp_opts = { buffer = args.buf, silent = true, noremap = true }
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, lsp_opts)
         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, lsp_opts)
         vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, lsp_opts)
-        vim.keymap.set('n', 'go', '<C-o>', lsp_opts)
+        --vim.keymap.set('n', 'go', '<C-o>', lsp_opts)
         vim.keymap.set('n', 'K', vim.lsp.buf.signature_help, lsp_opts)
         vim.keymap.set('i', '<C-K>', vim.lsp.buf.signature_help, lsp_opts)
         --vim.keymap.set('i', '<C-space>', vim.lsp.buf.completion, opts)
-        --vim.keymap.set('i', '<C-space>', vim.lsp.buf.omnifunc, opts)
         -- rather use omnifunc <C-x><C-o> instead.
-        --vim.opt.omnifunc = vim.lsp.buf.omnifunc
+        -- omnifunc is set by default!
         vim.keymap.set({'n', 'i'}, '<A-return>', vim.lsp.buf.code_action, lsp_opts)
     end})
+
+local markdown_group = vim.api.nvim_create_augroup('MarkdownGroup', { clear = true })
+vim.api.nvim_create_autocmd({"BufNewFile", "BufRead"}, {
+    pattern = "*.md",
+    group = markdown_group,
+    callback = function (args)
+        --print("
+        local md_opts = { buffer = args.buf, silent = true, noremap = true }
+        vim.keymap.set('n', '<leader>ip', "i```<CR><CR>```<up>", md_opts) -- [i]nsert [p]ython code block
+        vim.keymap.set('n', '<leader>rp', "<CMD>lua PipeToPython()<CR>", md_opts) -- [r]un [p]ython
+    end})
+
+
 
