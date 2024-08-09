@@ -2,7 +2,8 @@ return {
     "neovim/nvim-lspconfig",
     dependencies = {
         "williamboman/mason-lspconfig.nvim",
-        "williamboman/mason.nvim"
+        "williamboman/mason.nvim",
+        { 'j-hui/fidget.nvim', opts = {} }
     },
     config = function ()
         require("mason").setup()
@@ -11,7 +12,8 @@ return {
                 "clangd",
                 "lua_ls",
                 "pylsp",
-                "omnisharp"
+                "omnisharp",
+                "ltex"
             }
         })
         local util = require('lspconfig.util')
@@ -35,6 +37,14 @@ return {
         })
         lsp.omnisharp.setup({
             root_dir = util.root_pattern({"*.csproj", "*.sln", ".git"})
+        })
+        lsp.ltex.setup({
+            settings = {
+                ltex = {
+                    -- https://valentjn.github.io/ltex/advanced-usage.html#set-language-in-markdown-with-yaml-front-matter
+                    language = "de-AT",
+                },
+            }
         })
     end
 }
