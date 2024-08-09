@@ -28,7 +28,11 @@ vim.keymap.set("n", "<C-Down>", "<CMD>resize +1<CR>", opts)
 -- first column "0", so last should be ß on a german kb-layout
 vim.keymap.set({"n", "v", "o"}, "ß", "$", opts)
 
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', opts)
+-- unhighlight words on esc in normal mode
+vim.keymap.set("n", "<Esc>", "<CMD>nohlsearch<CR>", opts)
+
+-- quickly open nvim config
+vim.keymap.set("n", "<leader>ec", ":e ~/.config/nvim/", { noremap = true, desc = "[E]dit Neovim [C]onfiguration" })
 
 local lsp_attach_group = vim.api.nvim_create_augroup('LspAttachGroup', { clear = true })
 vim.api.nvim_create_autocmd("LspAttach", {
