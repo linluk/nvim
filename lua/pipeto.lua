@@ -3,8 +3,8 @@
 -- @param start_line the line to begin to search from
 -- @param limit_line look up to this line to search for the pattern
 -- @return the linenumber the pattern was found
-function _FindPatternLineNumber(pattern, start_line, limit_line)
-    local direction = 0
+local function findPatternLineNumber(pattern, start_line, limit_line)
+    local direction
     if limit_line > start_line then
         direction = 1
     elseif limit_line < start_line then
@@ -14,10 +14,10 @@ function _FindPatternLineNumber(pattern, start_line, limit_line)
         return -1
     end
 
-    local line_number = start_line - 1 * direction
+    local line_number = start_line - direction
     local tmp_line = ""
     while line_number ~= limit_line and not tmp_line:match(pattern) do
-        line_number = line_number + 1 * direction
+        line_number = line_number + direction
         tmp_line = vim.fn.getline(line_number)
     end
 
@@ -34,8 +34,8 @@ function PipeToExternal(cmd)
     local cursor_line = vim.fn.line(".")
     local last_line = vim.fn.line("$")
 
-    local code_start_line = _FindPatternLineNumber("^```", cursor_line, 1)
-    local code_end_line = _FindPatternLineNumber("^```", cursor_line, last_line)
+    local code_start_line = findPatternLineNumber("^```", cursor_line, 1)
+    local code_end_line = findPatternLineNumber("^```", cursor_line, last_line)
 
     -- sanity check
     if code_start_line <= 1 or code_end_line >= last_line or code_end_line < code_start_line then
@@ -55,25 +55,33 @@ function PipeToExternal(cmd)
 
     -- get the source code from the code block
     local code_lines = vim.fn.getline(code_start_line, code_end_line)
-    local code_text = table.concat(code_lines, "\n")
+    local code_text
+    if type(code_lines) == "string" then
+        code_text = code_lines
+    else
+        code_text = table.concat(code_lines, "\n")
+    end
     --print(code_text)
 
     -- execute the command
     local output_text = vim.fn.system(cmd, code_text)
     local output_lines = vim.split(output_text, "\n")
+    while output_lines[#output_lines] == "" do
+        table.remove(output_lines, #output_lines)
+    end
 
     -- surround the output with markers
     table.insert(output_lines, 1, "```text/result")
     table.insert(output_lines, "```")
 
-    -- find "old" text/result marker
-    local result_start_line = _FindPatternLineNumber("^```text/result", code_end_line, code_end_line + 5)
+    -- find "old" text/result marker (only a very near one!)
+    local result_start_line = findPatternLineNumber("^```text/result", code_end_line, code_end_line + 5)
     local result_end_line = 0
     if result_start_line > code_end_line and result_start_line < code_end_line + 5 then
         -- old result found
-        result_end_line = _FindPatternLineNumber("^```", result_start_line + 1, last_line)
+        result_end_line = findPatternLineNumber("^```", result_start_line + 1, last_line)
         if DEBUG then
-            print("result found!")
+            print("old result found!")
             print("result_start_line: ", result_start_line)
             print("result_end_line: ", result_end_line)
         end
@@ -84,7 +92,7 @@ function PipeToExternal(cmd)
         result_start_line = code_end_line + 3
         result_end_line = result_start_line
         if DEBUG then
-            print("NO result found!")
+            print("NO old result found!")
             print("result_start_line: ", result_start_line)
             print("result_end_line: ", result_end_line)
         end
