@@ -1,13 +1,44 @@
 return {
     "MeanderingProgrammer/render-markdown.nvim",
     opts = {},
-    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }
-}
-    --[['preservim/vim-markdown',
-    ft = 'markdown',
-    config = function()
-        vim.g.vim_markdown_fenced_languages = { 'python', 'c', 'javascript', 'html', 'css' }
-        vim.g.vim_markdown_folding_disabled = true
-        vim.g.vim_markdown_no_default_key_mappings = true
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' },
+    config = function ()
+        -- https://github.com/MeanderingProgrammer/render-markdown.nvim/wiki/
+        require("render-markdown").setup({
+            link = {
+                enabled = true,
+                image = '󰥶 ',
+                hyperlink = '󰌷 ',
+                highlight = 'RenderMarkdownLink',
+                custom = {
+                    web = { pattern = '^http[s]?://', icon = '󰖟 ', highlight = 'RenderMarkdownLink' },
+                    python = { pattern = '%.py$', icon = '󰌠 ', highlight = 'RenderMarkdownLink' },
+                },
+            },
+            heading = {
+                border = true
+            },
+            code = {
+                width = "block",
+                min_width = 80,
+                position = "right"
+            },
+            pipe_table = {
+                enabled = true,
+                preset = 'none',
+                style = 'full',
+                cell = 'padded',
+                alignment_indicator = '━',
+                border = {
+                    '┌', '┬', '┐',
+                    '├', '┼', '┤',
+                    '└', '┴', '┘',
+                    '│', '─',
+                },
+                head = 'RenderMarkdownTableHead',
+                row = 'RenderMarkdownTableRow',
+                filler = 'RenderMarkdownTableFill',
+            }
+        })
     end
-}--]]
+}

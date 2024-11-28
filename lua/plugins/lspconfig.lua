@@ -12,7 +12,7 @@ return {
                 "clangd",
                 "lua_ls",
                 "pylsp",
-                "omnisharp",
+                "omnisharp@v1.39.8", --https://github.com/OmniSharp/omnisharp-roslyn/issues/2574
                 "ltex"
             }
         })
@@ -46,5 +46,6 @@ return {
                 },
             }
         })
+        -- vim.lsp.set_log_level("debug")
     end
 }
