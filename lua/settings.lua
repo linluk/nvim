@@ -35,10 +35,15 @@ vim.opt.wildmenu = true
 vim.opt.wildoptions = 'pum,fuzzy'
 vim.opt.wildmode = 'longest,full'
 
+vim.opt.foldmethod = 'marker'
+vim.opt.foldtext = ''
+
 vim.api.nvim_create_autocmd("FileType", {
     pattern = {"help"},
     callback = function () vim.cmd('wincmd L') end
 })
 
+--vim.opts.rocks = { enabled = false }
+--vim.opt.rocks.enabled = false
+--opts.rocks.enabled = false
 
--- vim.opt.rocks.enabled = false

@@ -1,7 +1,10 @@
 require("settings")
 require("pipeto")
+require("alignon")
+-- require("tools")
 require("keymap")
 require("statusline")
+require("terminal")
 
 -- Bootstrap lazy.nvim
 --   lazypath will be something like  ~/.local/share/nvim/lazy/lazy.nvim/
@@ -23,5 +26,14 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Load Plugins from  ~/.config/nvim/lua/plugins/*
 -- require("lazy").setup("plugins")
-require("lazy").setup({ spec = { { import = "plugins" } } })
+require("lazy").setup(
+    {
+        spec = { { import = "plugins" } }
+    }, {
+        rocks = {
+            hererocks = false,
+            enabled = false
+        }
+    }
+)
 

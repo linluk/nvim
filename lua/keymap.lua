@@ -1,21 +1,26 @@
 vim.g.mapleader = ","
 vim.g.maplocalleader = ","
 
-local function map(mode, lhs, rhs, desc, silent, buffer)
+local function map(mode, lhs, rhs, desc, silent, buffer, expr)
     if desc == nil then
         desc = string.format("%smap %s %s", mode, lhs, rhs)
     end
     if silent == nil then
         silent = true
     end
+    if expr == nil then
+        expr = false
+    end
     local opts
     if buffer == nil then
-        opts = { noremap = true, silent = silent, desc = desc }
+        opts = { noremap = true, silent = silent, desc = desc, expr = expr }
     else
-        opts = { buffer = buffer, noremap = true, silent = silent, desc = desc }
+        opts = { buffer = buffer, noremap = true, silent = silent, desc = desc, expr = expr }
     end
     vim.keymap.set(mode, lhs, rhs, opts)
 end
+
+map("t", "<ESC>", "<C-\\><C-n>", "Use [ESC] to enter normal mode in :terminal buffer")
 
 -- navigate soft lines
 map("n", "j", "gj")
@@ -43,14 +48,30 @@ map("n", "<C-Right>", "<CMD>vertical resize +1<CR>", "Grow current window width"
 map("n", "<C-Up>", "<CMD>resize -1<CR>", "Shrink current window height")
 map("n", "<C-Down>", "<CMD>resize +1<CR>", "Grow current window height")
 
--- first column "0", so last should be ß on a german kb-layout
-map({"n", "v", "o"}, "ß", "$", "Use [ß] instead of [$] (next to [0] on german keyboard)")
-
 -- unhighlight words on esc in normal mode
 map("n", "<Esc>", "<CMD>nohlsearch<CR>", "Unhighlight search on <ESC> in normal mode")
 
 -- quickly open nvim config
 map("n", "<leader>ec", ":e ~/.config/nvim/", "[E]dit Neovim [C]onfiguration", false)
+
+-- toggle wrap
+map("n", "<leader>w", "<CMD>set invwrap<CR>", "Invert [W]rap")
+
+-- use space to toggle folding
+map("n", "<space>", "za", "Toggle Folding")
+
+-- first column "0", so last should be ß on a german kb-layout
+map({"n", "v", "o"}, "ß", "$", "Use [ß] instead of [$] (next to [0] on german keyboard)")
+
+-- make "0" jump between first character and first non-blank charakter
+map({"n", "v", "o"}, "0", function ()
+    -- \S is the charachter class for non-white-space-character (see :h /character-classes)
+    if (vim.fn.col('.') - 1) == vim.fn.match(vim.fn.getline('.'), '\\S') then
+        return "0"
+    else
+        return "^"
+    end
+end, nil, nil, nil, true)
 
 -- abbreviations
 vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
@@ -61,6 +82,35 @@ vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
         end
         _map("ia", "#i", "#include", "#i becomes #include")
         _map("ia", "#d", "#define", "#d becomes #define")
+    end})
+
+vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
+    group = vim.api.nvim_create_augroup("AbbrevMisc", { clear = true }),
+    callback = function (args)
+        local _map = function (m, l, r, d)
+            map(m, l, r, string.format("C-Abbrev: %s", d), nil, args.buf)
+        end
+        -- wtfpl {{{
+        local wtfpl = "            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE\
+                    Version 2, December 2004\
+\
+ Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>\
+\
+ Everyone is permitted to copy and distribute verbatim or modified\
+ copies of this license document, and changing it is allowed as long\
+ as the name is changed.\
+\
+            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE\
+   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION\
+\
+  0. You just DO WHAT THE FUCK YOU WANT TO.\
+"
+        -- wtfpl }}}
+        _map("ia", "((wtf))", wtfpl, "insert the WTFPL license text")
+        _map("ia", "((eke))", "Elektrotechnik, Kommunikation und Elektronik", "")
+        _map("ia", "((tfbs))", "Tiroler Fachberufsschule", "")
+        _map("ia", "((tfbseke))", "Tiroler Fachberufsschule für Elektrotechnik, Kommunikation und Elektronik", "")
+        _map("ia", "((c))", "(C) Lukas Singer <ESC>:r !date +\\%Y<CR>kJA", "")
     end})
 
 local lsp_attach_group = vim.api.nvim_create_augroup('LspAttachGroup', { clear = true })

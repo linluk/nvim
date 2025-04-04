@@ -13,7 +13,8 @@ return {
                 "lua_ls",
                 "pylsp",
                 "omnisharp@v1.39.8", --https://github.com/OmniSharp/omnisharp-roslyn/issues/2574
-                "ltex"
+                "ltex"--,
+                --"html-lsp"
             }
         })
         local util = require('lspconfig.util')
