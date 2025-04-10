@@ -30,8 +30,21 @@ return {
                 }
             }
         })
+        --[[
+        --  THE IDEA:
+        --  adding a $PROJECT_ROOT/inc or $PROJECT_ROOT/include or ... directory to
+        --  clangd so that i can use jumping and completions and so on.
+        local clangd_cmd = { "clangd" }
+        local clangd_root = util.root_pattern({"Makefile", ".git"})(vim.fn.expand("%:p"))
+        local clangd_inc = clangd_root .. "/inc"
+        if os.execute('bash -c "[[ -d \\"' .. clangd_inc .. '\\" ]THIS IS ONLY HERE SO THAT THE COMMENT BLOCK DOES NOT END]"') == 0 then
+            table.insert(clangd_cmd, "-I" .. clangd_inc)
+        end
+        --]]
         lsp.clangd.setup({
-            root_dir = util.root_pattern({"main.c", "Makefile", ".git"}),
+            --root_dir = util.root_pattern({"main.c", "Makefile", ".git"}),
+            root_dir = util.root_pattern({"Makefile", ".git"}),
+            --cmd = clangd_cmd
         })
         lsp.pylsp.setup({
             root_dir = util.root_pattern({"main.py", "requirements.txt", "venv", ".venv", ".git"})
