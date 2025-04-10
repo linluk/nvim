@@ -57,6 +57,8 @@ map("n", "<leader>ec", ":e ~/.config/nvim/", "[E]dit Neovim [C]onfiguration", fa
 -- toggle wrap
 map("n", "<leader>w", "<CMD>set invwrap<CR>", "Invert [W]rap")
 
+map("n", "<A-k>", "<CMD>lua vim.diagnostic.open_float()<CR>", "Show diagnostics on Alt+k")
+
 -- use space to toggle folding
 map("n", "<space>", "za", "Toggle Folding")
 
@@ -65,13 +67,13 @@ map({"n", "v", "o"}, "ß", "$", "Use [ß] instead of [$] (next to [0] on german 
 
 -- make "0" jump between first character and first non-blank charakter
 map({"n", "v", "o"}, "0", function ()
-    -- \S is the charachter class for non-white-space-character (see :h /character-classes)
-    if (vim.fn.col('.') - 1) == vim.fn.match(vim.fn.getline('.'), '\\S') then
-        return "0"
-    else
+    if vim.fn.col('.') == 1 then
         return "^"
+    else
+        return "0"
     end
 end, nil, nil, nil, true)
+map({"n", "v", "o"}, "<leader>0", "0", "<leader>0 forces 0, usefull in macros")
 
 -- abbreviations
 vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
@@ -106,10 +108,18 @@ vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
   0. You just DO WHAT THE FUCK YOU WANT TO.\
 "
         -- wtfpl }}}
+        -- cheader {{{
+        local cheader = function()
+            local fn = vim.fn.expand('%:t'):upper() -- get the filename, only the filename
+            fn = fn:gsub('%.', '_')
+            return '#ifndef ' .. fn .. '\n#define ' .. fn .. '\n\n\n#endif /* ' .. fn .. ' */'
+        end
+        -- cheader }}}
         _map("ia", "((wtf))", wtfpl, "insert the WTFPL license text")
         _map("ia", "((eke))", "Elektrotechnik, Kommunikation und Elektronik", "")
         _map("ia", "((tfbs))", "Tiroler Fachberufsschule", "")
-        _map("ia", "((tfbseke))", "Tiroler Fachberufsschule für Elektrotechnik, Kommunikation und Elektronik", "")
+        _map("ia", "((tfbs-eke))", "Tiroler Fachberufsschule für Elektrotechnik, Kommunikation und Elektronik", "")
+        _map("ia", "((c-header))", cheader(), "")
         _map("ia", "((c))", "(C) Lukas Singer <ESC>:r !date +\\%Y<CR>kJA", "")
     end})
 
