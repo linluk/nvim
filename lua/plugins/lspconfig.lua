@@ -12,7 +12,8 @@ return {
                 "clangd",
                 "lua_ls",
                 "pylsp",
-                "omnisharp@v1.39.8", --https://github.com/OmniSharp/omnisharp-roslyn/issues/2574
+                --"omnisharp@v1.39.8", --https://github.com/OmniSharp/omnisharp-roslyn/issues/2574
+                "omnisharp",
                 "ltex"--,
                 --"html-lsp"
             }
