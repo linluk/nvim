@@ -18,42 +18,40 @@ return {
                 --"html-lsp"
             }
         })
-        local util = require('lspconfig.util')
-        local lsp = require("lspconfig")
-        lsp.lua_ls.setup({
-            root_dir = util.root_pattern({"init.lua", ".git"}),
+
+        vim.lsp.config('lua_ls', {
+            filetypes = { 'lua' },
+            root_markers = { 'init.lua', '.git' },
             settings = {
                 Lua = {
                     runtime = { version = 'LuaJIT' },
-                    --workspace = { library = { vim.env.RUNTIME } },
                     workspace = { library = vim.api.nvim_get_runtime_file("", true) },
                     --diagnostics = { globals = { 'vim' } }
                 }
             }
         })
-        --[[
-        --  THE IDEA:
-        --  adding a $PROJECT_ROOT/inc or $PROJECT_ROOT/include or ... directory to
-        --  clangd so that i can use jumping and completions and so on.
-        local clangd_cmd = { "clangd" }
-        local clangd_root = util.root_pattern({"Makefile", ".git"})(vim.fn.expand("%:p"))
-        local clangd_inc = clangd_root .. "/inc"
-        if os.execute('bash -c "[[ -d \\"' .. clangd_inc .. '\\" ]THIS IS ONLY HERE SO THAT THE COMMENT BLOCK DOES NOT END]"') == 0 then
-            table.insert(clangd_cmd, "-I" .. clangd_inc)
-        end
-        --]]
-        lsp.clangd.setup({
-            --root_dir = util.root_pattern({"main.c", "Makefile", ".git"}),
-            root_dir = util.root_pattern({"Makefile", ".git"}),
-            --cmd = clangd_cmd
+        vim.lsp.enable('lua_ls')
+
+        vim.lsp.config('clangd', {
+            filetypes = { 'c', 'h', 'cpp', 'hpp' },
+            root_markers = { 'Makefile', '.git' }
         })
-        lsp.pylsp.setup({
-            root_dir = util.root_pattern({"main.py", "requirements.txt", "venv", ".venv", ".git"})
+        vim.lsp.enable('clangd')
+
+        vim.lsp.config('pylsp', {
+            filetypes = { 'python' },
+            root_markers = {"requirements.txt", "venv", ".venv", ".git"}
         })
-        lsp.omnisharp.setup({
-            root_dir = util.root_pattern({"*.csproj", "*.sln", ".git"})
+        vim.lsp.enable('pylsp')
+
+        vim.lsp.config('omnisharp', {
+            filetypes = { 'cs' },
+            root_markers = {"*.csproj", "*.sln", ".git"}
         })
-        lsp.ltex.setup({
+        vim.lsp.enable('omnisharp')
+
+        vim.lsp.config('ltex', {
+            filetypes = { 'tex', 'text', 'latex', 'markdown', 'org' },
             settings = {
                 ltex = {
                     -- https://valentjn.github.io/ltex/advanced-usage.html#set-language-in-markdown-with-yaml-front-matter
@@ -61,6 +59,8 @@ return {
                 },
             }
         })
+        vim.lsp.enable('ltex')
+
         -- vim.lsp.set_log_level("debug")
     end
 }
