@@ -43,7 +43,3 @@ vim.api.nvim_create_autocmd("FileType", {
     callback = function () vim.cmd('wincmd L') end
 })
 
---vim.opts.rocks = { enabled = false }
---vim.opt.rocks.enabled = false
---opts.rocks.enabled = false
-

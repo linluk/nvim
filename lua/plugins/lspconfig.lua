@@ -57,7 +57,12 @@ return {
                     -- https://valentjn.github.io/ltex/advanced-usage.html#set-language-in-markdown-with-yaml-front-matter
                     language = "de-AT",
                 },
-            }
+            },
+            on_attach = function(client, bufnr)
+                local utils = require('ltex_utils')
+                utils.setup_commands()
+                utils.load_dictionaries(client)
+            end
         })
         vim.lsp.enable('ltex')
 
